@@ -12,10 +12,10 @@
 
 
 
-### WebRTC html:
+### WebRTC html 测试页面:
 <img src="https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/main/images/109114434.jpg" width="600" /> 
 
-### Turn数据中转服务器运行turnserver：
+### Turn数据中转服务器turnserver：
 1）按照网络教程安装turnserver
 
 2）配置文件例如这里测试配置是turnserver.conf 
@@ -24,7 +24,7 @@
 
 此处测试Turnserver的IP地址是192.168.2.135
  
-### 安装数据库mongodb
+### 数据库mongodb
 安装例子：https://zhuanlan.zhihu.com/p/76349679
 数据库的数据结构如图，
 <img src="https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/main/images/db1.png" width="600" /> 
