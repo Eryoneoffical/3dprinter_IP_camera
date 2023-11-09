@@ -48,7 +48,7 @@ node index.js
 3)输入用户名何密码登录 test_0 密码123
 
 
-### Time lapse at every layers
+### Time lapse at each layers
 https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/main/images/timelapse_layers.mp4
 
 
