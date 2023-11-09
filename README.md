@@ -1,7 +1,16 @@
 # A 3dprinter IP camera with WebRTC
 
 ### Hardware:
+1. MCU: GK7202V300 ARM
+2. Camera：1080P
+3. Encoder: H.264
+4. wifi：2.4G 
+5. USB host: connect to 3d printer
+6. Linux version: 4.9.37
+
 <img src="https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/main/images/144619.jpg" width="600" /> 
+
+
 
 ### WebRTC html:
 <img src="https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/main/images/109114434.jpg" width="600" /> 
