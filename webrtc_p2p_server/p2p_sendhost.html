@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript" src="js/srs.sdk.p2p.js"></script>
+    <script type="text/javascript" src="js/winlin.utility.js"></script>
+    <script type="text/javascript" src="js/srs.page.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title></title>
+	<style>
+		* {
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+		}
+		.container {
+			width: 100%;
+			display: flex;
+			display: -webkit-flex;
+			justify-content: space-around;
+			padding-top: 20px;
+		}
+		.video-box {
+			position: relative;
+			width: 800px;
+			height: 400px;
+		}
+		#remote-video {
+			width: 100%;
+			height: 100%;
+			display: block;
+			object-fit: cover;
+			border: 1px solid #eee;
+			background-color: #F2F6FC;
+		}
+		#remote-video2 {
+			width: 10%;
+			height: 10%;
+			display: block;
+			object-fit: cover;
+			border: 1px solid #eee;
+			background-color: #F2F6FC;
+		}
+		
+		#local-video {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			width: 240px;
+			height: 120px;
+			object-fit: cover;
+			border: 1px solid #eee;
+			background-color: #EBEEF5;
+		}
+		.start-button {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			width: 100px;
+			display: none;
+			line-height: 40px;
+			outline: none;
+			color: #fff;
+			background-color: #409eff;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			transform: translate(-50%, -50%);
+		}
+		.logger {
+			width: 40%;
+			padding: 14px;
+			line-height: 1.5;
+			color: #4fbf40;
+			border-radius: 6px;
+			background-color: #272727;
+		}
+		.logger .error {
+			color: #DD4A68;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="video-box">
+			<video id="remote-video2"></video>
+			<video id="remote-video"></video>
+
+			<video id="local-video" muted></video>
+			<button class="start-button" onclick="startLive()">start</button>
+			<button  onclick="startLive_1()">start1</button>
+			
+		</div>
+		<div class="logger"></div>
+	</div>
+	<script>
+		const message = {
+			el: document.querySelector('.logger'),
+			log (msg) {
+				this.el.innerHTML += `<span>${new Date().toLocaleTimeString()}：${msg}</span><br/>`;
+			},
+			error (msg) {
+				this.el.innerHTML += `<span class="error">${new Date().toLocaleTimeString()}：${msg}</span><br/>`;
+			}
+		};
+		
+		const target = 'offer';location.search.slice(6);
+		const localVideo = document.querySelector('#local-video');
+		const remoteVideo = document.querySelector('#remote-video');
+		const remoteVideo2 = document.querySelector('#remote-video2');
+		const button = document.querySelector('.start-button');
+
+		localVideo.onloadeddata = () => {
+			console.log('播放本地视频');
+			localVideo.play();
+		}
+		remoteVideo.onloadeddata = () => {
+			console.log('播放对方视频');
+			remoteVideo.play();
+			
+		}
+
+		document.title = target === 'offer' ? '发起方' : '接收方';
+
+		console.log('信令通道（WebSocket）创建中......');
+		const socket = new WebSocket('ws://119.23.104.245:8080');
+		socket.onopen = () => {
+			console.log('信令通道创建成功！');
+			target === 'offer' && (button.style.display = 'block');
+		}
+
+function  isJSON(str) {
+    if (typeof str == 'string') {
+        try {
+            var obj=JSON.parse(str);
+            if(typeof obj == 'object' && obj ){
+                console.log('是JSON');
+                return true;
+            }else{
+                return false;
+            }
+        } catch(e) {
+            console.log('error：'+str+'!!!'+e);
+            return false;
+        }
+    }
+
+}
+var sdk = null; // Global handler to do cleanup when replaying.
+var startPlay = function(url) {
+
+
+        // Close PC when user replay.
+        if (sdk) {
+            sdk.close();
+        }
+        sdk = new SrsRtcPlayerAsync();
+
+        // https://webrtc.org/getting-started/remote-streams
+        //remoteVideo2.prop('srcObject', sdk.stream);
+		remoteVideo2.srcObject = sdk.stream;
+           // var url = $("#txt_url").val();
+       // parse_webrtc(url);
+        sdk.play(url).then(function(session){
+			// console.log("play url ",$("#txt_url").val());
+			// $('#datachannel_form').show();
+        }).catch(function (reason) {
+            sdk.close();
+ 
+        });
+    };
+	
+		
+		socket.onerror = () => console.error('信令通道创建失败！');
+		socket.onmessage = e => {
+			  
+			//if(isJSON(e.data)==true)
+			   var { type, sdp, iceCandidate } = JSON.parse(e.data)
+			// else
+			//   var { type, sdp, iceCandidate } = JSON.parse(JSON.stringify(e.data))
+	
+				console.log("type:",type," sdp :",sdp," iceCandidate:",iceCandidate);
+			if (type === 'answer') {
+				peer.setRemoteDescription(new RTCSessionDescription({ type, sdp }));
+			/*	var len=sdp.split("\n").length;
+				 console.log(sdp.split("\r\n")[len-2]);
+				 var tmpc=new RTCIceCandidate({
+					  candidate: sdp.split("\n")[len-2].substring(2),
+					  sdpMid: '0', // don't make it up, you get this in onicecandidate
+					  sdpMLineIndex: 0, // don't make it up, you get this in onicecandidate
+					})
+*/
+				// var tmpc=new RTCIceCandidate(sdp.split("\r\n")[len-2])
+				  
+				// console.log(tmpc);
+			//	peer.addIceCandidate(tmpc);
+				 
+			} else if (type === 'answer_ice') {
+			
+				peer.addIceCandidate(iceCandidate);
+				//webrtc://192.168.2.223:1988/live/livestream
+			 	var url="webrtc://"+iceCandidate.candidate.split(" ")[4]+":"+iceCandidate.candidate.split(" ")[5]+"/live/livestream";
+				console.log(url);
+				
+			//	 startPlay(url);
+				 
+			} else if (type === 'offer') {
+				 
+				startLive(new RTCSessionDescription({ type, sdp }));
+			} else if (type === 'offer_ice') {
+				 
+				peer.addIceCandidate(iceCandidate);
+			}
+		};
+const config = {
+			// bundlePolicy: 'balanced',
+			// certificates?: RTCCertificate[];
+		   // iceCandidatePoolSize?: number;
+		  // iceTransportPolicy: "relay",//  all
+		//   rtcpMuxPolicy : 'negotiate',
+		   iceServers: [
+						{
+						  urls: "stun:119.23.104.245:3478",
+						  username: "pc_rtc",
+						  credential: "pc_rtc"
+						}
+					]
+		};
+var offer;
+var has_send=0;
+		const PeerConnection = window.RTCPeerConnection  || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+		!PeerConnection && console.error('浏览器不支持WebRTC！');
+		const peer = new PeerConnection(config);
+		peer.addTransceiver("audio", {direction: "recvonly"});
+		peer.addTransceiver("video", {direction: "recvonly"});
+		peer.ontrack = e => {
+			if (e && e.streams) {
+				console.log('收到对方音频/视频流数据...');
+				remoteVideo.srcObject = e.streams[0];
+			}
+		};
+
+		var datachannel=peer.createDataChannel('chat');
+
+	datachannel.onopen = function(event) {
+		console.log("datachannel onopen: ", event.data);
+	}
+	datachannel.onmessage = function(event) {
+	  console.log("receive message: ", event.data);
+	   
+	}
+	datachannel.onerror=function(event) {
+	  console.log("datachannel error: ", event.data);
+	}
+	datachannel.onclose=function(event) {
+	  console.log("datachannel close: ");
+	}
+	
+var tem_candidate;
+function startLive_1()
+{
+socket.send(JSON.stringify({
+					type: `${target}_ice`,
+					iceCandidate: tem_candidate
+					}));
+}
+		peer.onicecandidate = e => {
+			if (e.candidate) {
+				console.log('搜集并发送候选人',e.candidate);
+				 
+				//socket.send('a='+e.candidate.candidate);
+			 	if((e.candidate.candidate.indexOf("192.168.2.")>0||e.candidate.candidate.indexOf("192.168.3.")>0||e.candidate.candidate.indexOf("192.168.101.")>0)
+			  	&&e.candidate.sdpMid.indexOf("0")>=0
+			  	)
+			//  	if(e.candidate.candidate.indexOf("relay")>0)
+			 // 	if(e.candidate.candidate.indexOf("rflx raddr")>0&&e.candidate.sdpMid.indexOf("0")>=0)
+				{
+			 	  	if(has_send==0)
+					{
+				  	  offer.sdp+="a="+e.candidate.candidate;
+				 	 socket.send(JSON.stringify(offer));
+				 	 console.log(`传输candiate:`,e.candidate)
+				 	// socket.send(offer.sdp+"a="+e.candidate.candidate);
+				 	//socket.send(JSON.stringify({
+					//type: `${target}_ice`,
+					//iceCandidate: e.candidate
+					//})); 
+					tem_candidate=e.candidate;
+				 	has_send=1;
+					//console.log(offer.sdp+"a="+e.candidate.candidate);
+					}
+					has_send++
+				}
+				/*socket.send(JSON.stringify({
+					type: `${target}_ice`,
+					iceCandidate: e.candidate
+				}));*/
+			} else {
+				console.log('候选人收集完成！');
+			}
+		};
+
+		async function startLive (offerSdp) {
+			target === 'offer' && (button.style.display = 'none');
+			let stream;
+			
+			try {
+				console.log('尝试调取本地摄像头/麦克风');
+				stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+				console.log('摄像头/麦克风获取成功！');
+				localVideo.srcObject = stream;
+			} catch {
+				console.error('摄像头/麦克风获取失败！');
+				//return;
+
+				let silence = () => {
+				  let ctx = new AudioContext(), oscillator = ctx.createOscillator();
+				  let dst = oscillator.connect(ctx.createMediaStreamDestination());
+				  oscillator.start();
+				  return Object.assign(dst.stream.getAudioTracks()[0], {enabled: false});
+				}
+
+				let black = ({width = 64, height = 48} = {}) => {
+				  let canvas = Object.assign(document.createElement("canvas"), {width, height});
+				  canvas.getContext('2d').fillRect(0, 0, width, height);
+				  let stream = canvas.captureStream();
+				  return Object.assign(stream.getVideoTracks()[0], {enabled: false});
+				}
+
+			 //	stream= new MediaStream([black(), silence()]);
+  stream= new MediaStream();
+
+				 
+			}
+ 
+			console.log(`------ WebRTC ${target === 'offer' ? '发起方' : '接收方'}流程开始 ------`);
+			console.log('将媒体轨道添加到轨道集');
+		
+			if(stream)
+				stream.getTracks().forEach(track => {
+				peer.addTrack(track, stream);
+					//peer.addTrack(track,audio);
+			});
+  
+			if (!offerSdp) {
+				console.log('创建本地SDP');
+				 offer = await peer.createOffer();
+				await peer.setLocalDescription(offer);
+				
+			//	console.log(`传输发起方本地SDP:`,offer.sdp+"a=candidate:2516196410 1 udp 2122260223 192.168.18.1 49678 typ host generation 0 ufrag rjX0 network-id 1");
+			   
+				 // socket.send(JSON.stringify(offer));
+				 // socket.send( offer.sdp+"a=candidate:2516196410 1 udp 2122260223 192.168.18.1 49678 typ host generation 0 ufrag rjX0 network-id 1");
+
+			} else {
+				console.log('接收到发送方SDP',offerSdp);
+				await peer.setRemoteDescription(offerSdp);
+
+				console.log('创建接收方（应答）SDP');
+				const answer = await peer.createAnswer();
+				console.log(`传输接收方（应答）SDP:`+answer.sdp);
+				socket.send(JSON.stringify(answer));
+				await peer.setLocalDescription(answer);
+			}
+		}
+	</script>
+</body>
+</html>

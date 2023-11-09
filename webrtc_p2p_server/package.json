@@ -1,0 +1,23 @@
+{
+  "name": "p2p",
+  "version": "1.0.0",
+  "description": "point to point by webrtc & websocket",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "author": "shushushu",
+  "license": "ISC",
+  "dependencies": {
+    "@popperjs/core": "^2.11.7",
+    "bootstrap": "^5.3.0-alpha2",
+    "express": "^4.18.2",
+    "express-ws": "^4.0.0",
+    "jquery": "^3.6.4",
+    "mongodb": "6.1",
+    "mongoose": "^7.6.1"
+  },
+  "directories": {
+    "doc": "docs"
+  }
+}

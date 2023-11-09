@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript" src="js/srs.sdk.p2p.js"></script>
+    <script type="text/javascript" src="js/winlin.utility.js"></script>
+    <script type="text/javascript" src="js/srs.page.js"></script>
+    <script type="text/javascript" src="js/moment.min.js"></script>
+    <script type="text/javascript" src="js/Chart.min.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="js/bootstrap-5.3.2/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title></title>
+	<style>
+	body
+	  {
+	  	background-color:#202225;
+	  }
+  
+		* {
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+			
+		}
+		.video-box {
+			position: relative;
+			width: 800px;
+			height: 400px;
+		}
+		#remote-video {
+			width: 100%;
+			height: 100%;
+			display: block;
+			object-fit: cover;
+			border: 0px solid #eee;
+			background-color: #F2F6FC;
+		}
+		#remote-video2 {
+			width: 10%;
+			height: 10%;
+			display: block;
+			object-fit: cover;
+			border: 1px solid #eee;
+			background-color: #F2F6FC;
+		}
+		
+		#local-video {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			width: 240px;
+			height: 120px;
+			object-fit: cover;
+			border: 1px solid #eee;
+			background-color: #EBEEF5;
+		}
+		.start-button {
+			position: absolute;
+			left: 220px;
+			top: 140px;
+
+			display: none;
+			line-height: 0px;
+			outline: none;
+			color: #0;
+			background-color: #fff0;
+			border: none;
+			border-radius: 0px;
+			cursor: pointer;
+			
+		}
+		.logger {
+			width: 40%;
+			padding: 14px;
+			line-height: 1.5;
+			color: #4fbf40;
+			border-radius: 6px;
+			background-color: #272727;
+		}
+		.logger .error {
+			color: #DD4A68;
+		}
+		video::-webkit-media-controls-fullscreen-button {
+	    
+		}
+		video::-webkit-media-controls-play-button {display: none;}
+		video::-webkit-media-controls-timeline {display: none;}
+		video::-webkit-media-controls-current-time-display{display: none;}
+		video::-webkit-media-controls-time-remaining-display {display: none;}
+		video::-webkit-media-controls-mute-button {display: none;}
+		video::-webkit-media-controls-toggle-closed-captions-button {display: none;}
+		video::-webkit-media-controls-volume-slider {display: none;}
+
+.login-page {
+  width: 360px;
+  padding: 8% 0 0;
+  margin: auto;
+}
+.form {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.form input {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  width: 100%;
+  border: 0;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+.form button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #4CAF50;
+  width: 100%;
+  border: 0;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.form button:hover,.form button:active,.form button:focus {
+  background: #43A047;
+}
+.form .message {
+  margin: 15px 0 0;
+  color: #b3b3b3;
+  font-size: 12px;
+}
+.form .message a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+.form .register-form {
+  display: none;
+}
+
+
+	</style>
+</head>
+<body>
+  <script src="js/bootstrap-5.3.2/js/jquery.min.js"></script>
+  <script src="js/bootstrap-5.3.2/js/bootstrap.min.js"></script>
+  
+<div class="login-page" id="login_page">
+  <div class="form">
+    <form class="register-form">
+      <input type="text" placeholder="name"/>
+      <input type="password" placeholder="password"/>
+      <input type="text" placeholder="email address"/>
+      <button>create</button>
+      <p class="message">Already registered? <a href="#">Sign In</a></p>
+    </form>
+     
+      <input type="text" placeholder="username" id="login_name" value="test_0"/>
+      <input type="password" placeholder="password" id="login_pass" value="123"/>
+      <button onclick="on_login()">login</button>
+      <p class="message">Not registered? <a href="#">Create an account</a></p>
+     
+  </div>
+</div>
+
+<div id="main_page" style="visibility :hidden">    
+<nav class="navbar navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">ERYONE</a>
+    <i class="bi-sign-stop " style="font-size: 2rem; color:  #ffffff;position: absolute;right: 90px;top:5px "></i>
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Menu</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+            <a style=" " class="nav-link" id="btn_linux_command"  >Reboot Linux</a>
+          </li>
+
+        </ul>
+
+      </div>
+    </div>
+  </div>
+       <dialog id="reboot_dialog">
+        <p>
+          Here is some text for example.
+        </p>
+        <button id="hide">Close dialog text</button>
+      </dialog>
+      <script type="text/JavaScript">     
+          (function() { var dialog = document.getElementById('reboot_dialog'); document.getElementById('btn_linux_command').onclick = function() { dialog.show(); }; document.getElementById('hide').onclick = function() {data_send_reboot(); dialog.close(); }; })();    
+      </script>
+      
+</nav>
+
+
+
+
+<div class="container text-center ">
+<div class="row row-cols-auto bg-dark"  style="position: absolute; top:60px">
+	 <div class="col">
+	   <div class="list-group">
+	     
+	      <a href="#" class="list-group-item list-group-item-dark active">
+	       <i class="bi-camera " style="font-size: 2rem; color:  #ffffff;position: absolute;left: 10px;top:-5px"></i>
+	       
+	        <h5 class="list-group-item-heading ">       
+	            Camera
+	        </h5>
+	       </a>
+	        <div   style="width: 480px;height: 300px;">
+				<video controls  id="remote-video" style="width: 480px;height: 270px;"></video>
+				<button class=" bi-play-btn-fill start-button " style="font-size: 4rem; " id="start_play" onclick="startLive()"></button>
+				<div   style=" height: 10px;">
+				</div>
+		    </div>
+	       
+	   </div>
+	  </div>
+	   <div class="col"  >
+	   <div class="list-group "  > 
+	       <a href="#" class="list-group-item list-group-item-dark active"  >
+	       <i class="bi-arrows-move " style="font-size: 2rem; color:  #ffffff;position: absolute;left: 10px;top:-5px"></i>
+	       
+	        <h5 class="list-group-item-heading " >       
+	            Move
+	        </h5>
+	       </a>
+	        <div   style="width: 480px;height: 300px;">
+	        <button onclick="data_send_gcode('G91\nG1X-'+mm_motor+'\nG90\n')" class="bi-arrow-left btn btn-outline-secondary btn-dark " style="font-size: 1.5rem;font-weight: 600; color:  #ffffff;position: relative;top:80px;left:0px "></button>
+	        <button onclick="data_send_gcode('G91\nG1Y'+mm_motor+'\nG90\n')" class="bi-arrow-up btn btn-outline-secondary btn-dark " style="font-size: 1.5rem; color: #ffffff;position: relative;top:20px;left:2px  "></button>
+	        <button onclick="data_send_gcode('G91\nG1Y-'+mm_motor+'\nG90\n')" class="bi-arrow-down btn btn-outline-secondary btn-dark " style="font-size: 1.5rem; color:  #ffffff;position: relative;top:140px;left:-52px  "></button>
+	        <button onclick="data_send_gcode('G91\nG1X'+mm_motor+'\nG90\n')" class="bi-arrow-right btn btn-outline-secondary btn-dark " style="font-size: 1.5rem; color:  #ffffff;position: relative; top:80px;left:-48px "></button>
+	        <button onclick="data_send_gcode('G28XY')" class="bi-house-fill btn btn-outline-success btn-success " style="font-size: 1.5rem; color:  #ffffff;position: relative;top:80px;left:-162px  "></button>
+
+	        <button onclick="data_send_gcode('G91\nG1Z'+mm_motor+'\nG90\n')" class="bi-arrow-up btn btn-outline-secondary btn-dark " style="font-size: 1.5rem; color: #ffffff;position: relative;top:20px;left:-50px  "></button>
+	        <button onclick="data_send_gcode('G28Z')"class="bi-house-fill btn btn-outline-success btn-success " style="font-size: 1.5rem; color: #ffffff;position: relative;top:80px;left:-105px  "></button>
+	        <button onclick="data_send_gcode('G91\nG1Z-'+mm_motor+'\nG90\n')" class="bi-arrow-down btn btn-outline-secondary btn-dark " style="font-size: 1.5rem; color: #ffffff;position: relative;top:140px;left:-160px  "></button>
+
+
+			<div style="font-size: 1.2rem; color: #ffffff;position: relative;top:180px;left:100px  ">
+				<input onclick="mm_checkbox(0.1)" type="checkbox" class="btn-check" id="btn-check-0" unchecked autocomplete="off">
+				<label class="btn btn-outline-secondary" for="btn-check-0">0.1mm</label>
+				<input onclick="mm_checkbox(1)" type="checkbox" class="btn-check" id="btn-check-1" checked autocomplete="off">
+				<label class="btn btn-outline-secondary" for="btn-check-1">1mm</label>
+				<input onclick="mm_checkbox(10)" type="checkbox" class="btn-check" id="btn-check-2" unchecked autocomplete="off">
+				<label class="btn btn-outline-secondary" for="btn-check-2">10mm</label>
+			</div>
+	        <button onclick="data_send_gcode('G91\nG1E'+mm_motor+'\nG90\n')" class="bi-arrow-up btn btn-outline-secondary btn-dark " style="font-size: 1.5rem; color: #ffffff;position: relative;top:-65px;left:212px  "></button>
+	        <button onclick="data_send_gcode('G91\nG1E-'+mm_motor+'\nG90\n')" class="bi-arrow-down btn btn-outline-secondary btn-dark " style="font-size: 1.5rem; color: #ffffff;position: relative;top:50px;left:158px  "></button>
+			<a style="font-size: 1.1rem; color: #ffffff;position: relative;top:100px;left:-175px  ">XY</a>
+			<a style="font-size: 1.1rem; color: #ffffff;position: relative;top:100px;left:-30px  ">Z</a>
+			<a style="font-size: 1.1rem; color: #ffffff;position: relative;top:100px;left:80px  ">E</a>
+				<div   style="font-size: 1rem; color: #ffffff;position: relative;top:-40px;right:-160px  " >
+				<a id="tmp_control">&#8451;</a>
+				</div>
+	        </div>
+
+	  </div>
+	 </div>
+	   <div class="col"  >
+	   <div class="list-group "  > 
+	       <a href="#" class="list-group-item list-group-item-dark active"  >
+	       <i class="bi-thermometer-half " style="font-size: 2rem; color:  #ffffff;position: absolute;left: 10px;top:-5px"></i>
+	       
+	        <h5 class="list-group-item-heading " >       
+	            Temperature
+	        </h5>
+	       </a>
+	        <div   style="width: 480px;height: 300px;">
+
+
+				<div class="input-group input-group-sm mb-3" style="color: #dedede">
+				  <div class="input-group-prepend">
+				    <span class="input-group-text-dark" style=" color:  #dedede" id="inputGroup-sizing-sm">Extruder <a id="cur_tmper"> </a>&#8451; /&nbsp;&nbsp; </span>
+				  </div>
+				  <input type="text" id="input_nozzle" aria-label="Small" style="width:50px;border-radius:5px;" aria-describedby="inputGroup-sizing-sm"> &#8451;&nbsp;&nbsp;&nbsp;
+				  <div class="input-group-prepend" >
+				    <span class="input-group-text-dark" style=" color:  #dedede" id="inputGroup-sizing-sm">&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				    Bed <a id="cur_bed_tmp"> </a>&#8451; /&nbsp;&nbsp;</span>
+				  </div>
+				  <input type="text" id="input_bed" style="width:40px;border-radius:5px;" aria-label="Small" aria-describedby="inputGroup-sizing-sm">&#8451;
+				</div>
+
+				
+				  <canvas style="width: 100%;height:100%;" id="TemChart"></canvas>
+				 
+	        </div>
+	        
+	  </div>
+	 </div>
+	 
+	  <div class="col" >
+	   <div class="list-group">
+	     
+	      <a href="#" class="list-group-item list-group-item-dark active" >
+	       <i class="bi-terminal " style="font-size: 2rem; color:  #ffffff;position: absolute;left: 10px;top:-5px"></i>
+	       
+	        <h5 class="list-group-item-heading ">       
+	            Terminal
+	        </h5>
+	       </a>
+			<div style="width: 480px;height: 0px;"></div>
+			  
+				<input style="position: relative;width:200px;height:40px" type="text" id="datachannel_send" width="200" value="M105"> 
+			    <button style="position: relative;top:-40px;width:100px;left:210px;" class="btn btn-outline-secondary" id="btn_play_send" onclick="data_send()">Send</button>
+			           
+		    <div class="mb-3">
+			  <textarea class="form-control" style="position: relative;top:-35px;width:480px;height:250px"   id="datachannel_recv" placeholder="Recieved:" rows="3"></textarea>
+			</div>
+	       
+	   </div>
+	  </div>
+	  
+	   <div class="col"  >
+	   <div class="list-group bg-light"  > 
+	       <a href="#" class="list-group-item list-group-item-dark active"  >
+	       <i class="bi-files " style="font-size: 2rem; color:  #ffffff;position: absolute;left: 10px;top:-5px"></i>
+	       
+	        <h5 class="list-group-item-heading " >       
+	            Files
+	        </h5>
+	       </a>
+	        <div   style="width: 480px;height: 300px;">
+
+				<div class="input-group">
+				  <div class="custom-file">
+				    <input type="file" class="custom-file-input form-control " id="uploadFile">
+				  </div>
+				  <div class="input-group-append">
+				    <button class="btn btn-outline-secondary" type="button" onclick="readLocalFile()">upload</button>
+				  </div>
+				</div>
+			    <button class="bi-arrow-repeat btn btn-outline-secondary   " style="font-size: 1rem; position: relative;left: -190px;" id="btn_file_list" onclick="sd_get_files()">Refresh</button>
+				<table class="table table-light table-striped table-hover"   id="FILE_LIST" onclick="ListClick()">
+				  <thead>
+				    <tr>
+				      <th scope="col">Number</th>
+				      <th scope="col">File Name</th>
+				      <th scope="col">Print</th>
+				      <th scope="col">Delete</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+
+				  </tbody>
+				</table>		
+	        </div>
+	        
+	  </div>
+	 </div>
+
+
+</div>
+
+
+
+
+
+	
+	<div class="toast-container position-relative top-50 start-50 translate-middle">
+	<div id="confirm1" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+	 <h5 class="modal-title" id="confirm_str">Confirm</h5>
+	    <div class="modal-footer">
+	      <button type="button" class="btn btn-primary btn-sm">Yes</button>
+	      <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="toast">No</button>
+	    </div>
+	</div>  
+	</div>
+
+</div>
+
+ <script>
+
+
+ function on_login()
+ {
+ 
+	socket.send(document.getElementById('login_name').value+":"+document.getElementById('login_pass').value+";login");
+ }
+
+
+ var mm_motor=1;
+ function mm_checkbox(val)
+ {
+ 	mm_motor=val;
+ 	if(val==0.1)
+ 	{
+		document.getElementById("btn-check-0").checked=true;
+		document.getElementById("btn-check-1").checked=false;
+		document.getElementById("btn-check-2").checked=false;
+		
+ 	}
+ 	if(val==1)
+ 	{
+		document.getElementById("btn-check-0").checked=false;
+		document.getElementById("btn-check-1").checked=true;
+		document.getElementById("btn-check-2").checked=false;
+		
+ 	}
+ 	if(val==10)
+ 	{
+		document.getElementById("btn-check-0").checked=false;
+		document.getElementById("btn-check-1").checked=false;
+		document.getElementById("btn-check-2").checked=true;
+		
+ 	}
+	
+ }
+
+const input_z = document.getElementById('input_nozzle');
+const input_b = document.getElementById('input_bed');
+
+input_z.addEventListener('change', function () {
+  data_send_gcode("M104 S"+input_z.value)
+});
+input_b.addEventListener('change', function () {
+  data_send_gcode("M140 S"+input_b.value)
+});
+
+
+ 
+//var result = [{ x: "18:00", y: "230" }, { x: "19:00", y: "102" }, { x: "20:00", y: "236" }, { x: "22:00", y: "228" }];
+//var resultbed = [{ x: "18:00", y: "200" }, { x: "19:00", y: "32" }, { x: "20:00", y: "206" }, { x: "22:00", y: "228" }];
+
+var result = [];
+var resultbed = [];
+// parse labels and data
+var labels = result.map(e => moment(e.x, 'HH:mm'));
+var data = result.map(e => +e.y);
+
+var databed = resultbed.map(e => +e.y);
+
+var ctx = document.getElementById("TemChart").getContext('2d');
+var myChart = new Chart(ctx, {
+   type: 'line',
+   data: {
+      labels: labels,
+      datasets: [{
+         label: 'Nozzle',
+         data: data,
+         borderWidth: 1,
+         backgroundColor:"rgba(255,255,255,0.5)",
+         borderColor:"rgba(0,255,0,0.5)",
+      },
+      {
+         label: 'Bed',
+         data: databed,
+         borderWidth: 1,
+         backgroundColor:"rgba(255,255,255,0.5)",
+         borderColor:"rgba(255,0,0,0.5)",
+      }]
+   },
+   options: {
+      scales: {
+         xAxes: [{
+            type: 'time',
+            gridLines: {
+               zeroLineColor: "rgba(255,255,255,0.5)"
+            },
+            ticks: {
+               padding: 20,
+               fontColor: "rgba(255,255,255,0.5)",
+               fontStyle: "bold"
+            },
+            time: {
+               unit: 'minute',
+               displayFormats: {
+                  hour: 'HH:mm:ss'
+               }
+            }
+         }]
+      },
+   }
+});
+  console.log('myChart: '+myChart.data.labels);
+ // myChart.data.labels.push({ x: "22:30", y: "28" })
+   
+
+    var int=self.setInterval("clock()",2000);
+	function clock()
+	{
+	   if (!datachannel) return;  
+	   data_send_gcode("M105");
+	   //result.push({ x: hours+":"+minutes+":"+seconds, y: "236"});
+	   myChart.data.datasets[0].data = result.map(e => +e.y);
+	   myChart.data.datasets[1].data = resultbed.map(e => +e.y);
+	   myChart.data.labels=result.map(e => moment(e.x, 'HH:mm:ss'));
+	   myChart.update();
+	}
+
+</script>
+
+	<script> 
+////data channel data header
+	var normal_cmd_header="NORMAL_CMD:"
+	var normal_cmd_header_getfile="GETFILES"
+	
+	var gcode_cmd_header="GCODE_CMD:"	
+	var write_file_header="WRITE_FILE:"
+	var write_file_header2_start ="Start,file_name:"
+	var write_file_header2_finish="finish_write_file"
+	
+	var read_file_header="READ_FILE:"
+	var pack_len = 512
+
+	
+
+	/////////////
+	function dialog_show(confirm_str)
+	{
+	  const toastLiveExample = document.getElementById('confirm1')
+	  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+	  
+	  document.getElementById('confirm_str').innerText= confirm_str
+    
+
+	   toastBootstrap.show()
+
+
+	}
+
+
+	function File_list_add(num,name)
+	{
+		var tab=document.getElementById('FILE_LIST');
+        var tr = ' <tr > '+ 
+          '<th scope="row">'+num+'</th>'+ 
+          '<td >'+name+' </td>'+
+          '<td >Print</td>'+ 
+          '<td >Delete</td>'+
+          ' </tr>';
+          tab.innerHTML+=tr;  
+	}
+
+	function ListClick()
+	{
+		var td = event.srcElement; 
+		console.log("row:" + (td.parentElement.rowIndex) + ",col:" + td.cellIndex);
+		var indexx=td.parentElement.rowIndex;
+		const mfile = td.parentElement.innerText.split("\t");
+		dialog_show("Print "+mfile[1]+"?") 
+		if(mfile[1].indexOf('.gc')>0)
+			datachannel.send(gcode_cmd_header+"M23  FILE:/sd/gcode/"+mfile[1]+"\n");	
+	}
+   
+	function data_send_open()
+	{
+        if (!datachannel) return;     
+        if(datachannel.readyState == "open") 
+			datachannel.send(gcode_cmd_header+"M101  D/dev/ttyUSB0  B115200\n");		
+	}
+
+		
+		const message = {
+			el: document.querySelector('.logger'),
+			log (msg) {
+				this.el.innerHTML += `<span>${new Date().toLocaleTimeString()}：${msg}</span><br/>`;
+			},
+			error (msg) {
+				this.el.innerHTML += `<span class="error">${new Date().toLocaleTimeString()}：${msg}</span><br/>`;
+			}
+		};
+		 
+		const target = 'offer';location.search.slice(6);
+		//const localVideo = document.querySelector('#local-video');
+		const remoteVideo = document.querySelector('#remote-video');
+		const remoteVideo2 = document.querySelector('#remote-video2');
+		const button = document.querySelector('.start-button');
+		
+		remoteVideo.onloadeddata = () => {
+			console.log(' ');
+			remoteVideo.play();
+			
+		}
+
+		document.title = target === 'offer' ? '发起方' : '接收方';
+
+		console.log('信令通道（WebSocket）创建中......');
+		const socket = new WebSocket('ws://192.168.2.34:8182');
+		socket.onopen = () => {
+			console.log('信令通道创建成功！');
+			target === 'offer' && (button.style.display = 'block');
+		}
+
+		
+
+function  isJSON(str) {
+    if (typeof str == 'string') {
+        try {
+            var obj=JSON.parse(str);
+            if(typeof obj == 'object' && obj ){
+                console.log('是JSON');
+                return true;
+            }else{
+                return false;
+            }
+        } catch(e) {
+            console.log('error：'+str+'!!!'+e);
+            return false;
+        }
+    }
+
+}
+var sdk = null; // Global handler to do cleanup when replaying.
+var startPlay = function(url) {
+
+
+        // Close PC when user replay.
+        if (sdk) {
+            sdk.close();
+        }
+        sdk = new SrsRtcPlayerAsync();
+
+        // https://webrtc.org/getting-started/remote-streams
+        //remoteVideo2.prop('srcObject', sdk.stream);
+		remoteVideo2.srcObject = sdk.stream;
+           // var url = $("#txt_url").val();
+       // parse_webrtc(url);
+        sdk.play(url).then(function(session){
+			  console.log("play url ",$("#txt_url").val());
+			   
+        }).catch(function (reason) {
+            sdk.close();
+ 
+        });
+    };
+	
+
+	
+		socket.onerror = () => console.error('信令通道创建失败！');
+		socket.onmessage = e => {
+			if(e.data.indexOf("login fail")==0)
+			{
+				alert("login fail");
+				return;
+			}
+			else if(e.data.indexOf("login_success")==0)
+			{
+				document.getElementById("main_page").style.visibility="visible";
+				document.getElementById("login_page").style.visibility="hidden"; 
+				return;
+			}
+			//if(isJSON(e.data)==true)
+			   var { type, sdp, iceCandidate,online } = JSON.parse(e.data)
+			// else
+			//   var { type, sdp, iceCandidate } = JSON.parse(JSON.stringify(e.data))
+	
+				console.log("type:",type," sdp :",sdp," iceCandidate:",iceCandidate,"online:",online);
+			if(online==0)
+				window.location.reload();	
+			if (type === 'answer') {
+				peer.setRemoteDescription(new RTCSessionDescription({ type, sdp }));
+			/*	var len=sdp.split("\n").length;
+				 console.log(sdp.split("\r\n")[len-2]);
+				 var tmpc=new RTCIceCandidate({
+					  candidate: sdp.split("\n")[len-2].substring(2),
+					  sdpMid: '0', // don't make it up, you get this in onicecandidate
+					  sdpMLineIndex: 0, // don't make it up, you get this in onicecandidate
+					})
+*/
+				// var tmpc=new RTCIceCandidate(sdp.split("\r\n")[len-2])
+				  
+				// console.log(tmpc);
+			//	peer.addIceCandidate(tmpc);
+				 
+			} else if (type === 'answer_ice') {
+			
+				peer.addIceCandidate(iceCandidate);
+			 	var url="webrtc://"+iceCandidate.candidate.split(" ")[4]+":"+iceCandidate.candidate.split(" ")[5]+"/live/livestream";
+				console.log(url);
+				
+			//	 startPlay(url);
+				 
+			} else if (type === 'offer') {
+				 
+				startLive(new RTCSessionDescription({ type, sdp }));
+			} else if (type === 'offer_ice') {
+				 
+				peer.addIceCandidate(iceCandidate);
+			}
+			
+		};
+const config = {
+			  bundlePolicy: 'balanced',
+			// certificates?: RTCCertificate[];
+		   // iceCandidatePoolSize?: number;
+		  // iceTransportPolicy: "relay",//  all
+		    rtcpMuxPolicy : 'negotiate',
+		   iceServers: [
+						{
+						  urls: "turn:192.168.2.135:3478",
+						  username: "pc_rtc",
+						  credential: "pc_rtc"
+						}
+					]
+		};
+var offer;
+var has_send=0;
+		const PeerConnection = window.RTCPeerConnection  || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+		!PeerConnection && console.error('浏览器不支持WebRTC！');
+		const peer = new PeerConnection(config);
+		peer.addTransceiver("audio", {direction: "recvonly"});
+		peer.addTransceiver("video", {direction: "recvonly"});
+		peer.ontrack = e => {
+			if (e && e.streams) {
+				console.log('收到对方音频/视频流数据...');
+				remoteVideo.srcObject = e.streams[0];
+			}
+		};
+
+	var datachannel=peer.createDataChannel('chat');
+
+var bytes,bytes_cont;
+
+function sd_get_files()
+{
+	datachannel.send(normal_cmd_header+normal_cmd_header_getfile);	
+	console.log(normal_cmd_header+normal_cmd_header_getfile);
+}
+function string_to_byte_array(str)
+{
+
+	var bytes = [];
+	for (var i = 0; i < str.length; ++i)
+	{
+	    var charCode = str.charCodeAt(i);
+	  //  bytes.push((charCode & 0xFF00) >> 8);
+	    bytes.push(charCode & 0xFF);
+	}
+   return bytes
+}
+function mergeUInt8Arrays(a1 , a2 ) {
+  // sum of individual array lengths
+  var mergedArray = new Uint8Array(a1.length + a2.length);
+  mergedArray.set(a1);
+  mergedArray.set(a2, a1.length);
+  return mergedArray;
+}
+
+function add_header_byte(cmd_str,bytebuf)
+{
+	var send_t=new TextEncoder().encode(cmd_str)	
+	var send_b =mergeUInt8Arrays(send_t,bytebuf)
+	return send_b;
+		
+}
+   function readLocalFile () {
+        var localFile = document.getElementById("uploadFile").files[0];
+        var reader = new FileReader();
+		const _this = this;
+		reader.readAsArrayBuffer(localFile);
+        reader.onload = function() {
+		    bytes = new Uint8Array(this.result);
+            console.log("NAME:"+localFile.name);
+	
+			if (!datachannel) return;    
+			if(datachannel.readyState != "open")  return;    
+			
+			datachannel.send(write_file_header+write_file_header2_start+localFile.name);		
+		    console.log(write_file_header+write_file_header2_start+localFile.name);
+			//setTimeout(() => {
+			//  console.log("this is the first message");
+			//}, 10);
+        }
+        
+    }
+
+	datachannel.onopen = function(event) {
+		 // datachannel.send('M');
+		 console.log("datachannel onopen: ", event);
+		 data_send_open()
+	}
+	datachannel.onmessage  = function(event) {
+	  console.log("receive message: ", event.data);
+	  if(event.data=="start write file ok")
+	  {
+	  	bytes_cont=0
+		
+		//var send_b =add_header_byte(write_file_header,bytes.slice(bytes_cont, bytes_cont+pack_len))
+	  	datachannel.send(add_header_byte(write_file_header,bytes.slice(bytes_cont, bytes_cont+pack_len)));
+	     
+		bytes_cont+=pack_len;
+	  }
+	  else if(event.data=="write file ok") 
+	  {
+	  	if (bytes_cont>=bytes.length)
+	  	{
+	  		console.log(write_file_header+write_file_header2_finish);
+			datachannel.send(write_file_header+write_file_header2_finish);
+		}
+	  	else if((bytes.length-bytes_cont)<pack_len)
+	  	{
+			//datachannel.send(write_file_header+bytes.slice(bytes_cont, bytes_cont+bytes.length-bytes_cont));
+			datachannel.send(add_header_byte(write_file_header,bytes.slice(bytes_cont, bytes.length)));
+			console.log(write_file_header+"last one");
+		}
+		else
+	  		//datachannel.send(write_file_header+bytes.slice(bytes_cont, bytes_cont+pack_len));
+			datachannel.send(add_header_byte(write_file_header,bytes.slice(bytes_cont, bytes_cont+pack_len)));
+		bytes_cont+=pack_len;
+	  }
+	  else if(event.data=="finish write file ok") 
+	  {
+	  	
+	  }
+	  else if(event.data.indexOf("File_name:")==0) 
+	  {
+	  	name=event.data.slice(10)
+	  	File_list_add(1,name);
+	  }
+	  else if(event.data.indexOf(" T:")>=0) 
+	  {
+	  	var start_s=event.data.indexOf(" T:")+3;
+	  	var tmp=parseFloat(event.data.substring(start_s))
+	  	var d=new Date();
+		var hours = d.getHours(); 
+		var minutes = d.getMinutes();
+	    var seconds = d.getSeconds();
+        document.getElementById('cur_tmper').innerHTML=""+tmp;
+        document.getElementById('tmp_control').innerHTML=""+tmp+"&#8451;";
+
+		result.push({ x: hours+":"+minutes+":"+seconds, y: ""+tmp});
+		start_s=event.data.indexOf(" B:")+3;
+	  	tmp=parseFloat(event.data.substring(start_s))
+	  	console.log("bed: ", tmp);
+	  	resultbed.push({ x: hours+":"+minutes+":"+seconds, y: ""+tmp});
+	  	document.getElementById('cur_bed_tmp').innerHTML=""+tmp;
+	  	return;
+	  }
+	  
+	  
+	  document.getElementById('datachannel_recv').innerHTML+=event.data
+	  document.getElementById("datachannel_recv").scrollTop = document.getElementById("datachannel_recv").scrollHeight; 
+	   
+	}
+	datachannel.onerror=function(event) {
+	  console.log("datachannel error: ", event.data);
+	}
+	datachannel.onclose=function(event) {
+	  console.log("datachannel close: ");
+	}
+
+	function data_send()
+	{
+        if (!datachannel) return;     
+        console.log("send message readyState: ", datachannel.readyState);
+        if(datachannel.readyState == "open") 
+			datachannel.send(gcode_cmd_header+document.getElementById('datachannel_send').value);		
+	}
+	
+	function data_send_gcode(g_str)
+	{
+        if (!datachannel) return;     
+        console.log("send: ", g_str);
+        if(datachannel.readyState == "open") 
+        {
+			datachannel.send(gcode_cmd_header+g_str);	
+			document.getElementById('datachannel_recv').innerHTML+=g_str
+		}
+	}
+	
+	function data_send_reboot()
+	{
+	     
+		socket.send(JSON.stringify({
+					type: "linux_command",
+					command:"reboot -f "
+					}));
+	}
+	
+var tem_candidate;
+function startLive_1()
+{
+socket.send(JSON.stringify({
+					type: `${target}_ice`,
+					iceCandidate: tem_candidate
+					}));
+}
+		peer.onicecandidate = e => {
+			if (e.candidate) {
+				console.log('搜集并发送候选人',e.candidate);
+				 
+				//socket.send('a='+e.candidate.candidate);
+			 //	if((e.candidate.candidate.indexOf("192.168.2.")>0||e.candidate.candidate.indexOf("192.168.3.")>0||e.candidate.candidate.indexOf("192.168.101.")>0)
+			  //	&&e.candidate.sdpMid.indexOf("0")>=0
+			  //	)
+			   	if(e.candidate.candidate.indexOf("relay")>0&&e.candidate.sdpMid.indexOf("0")>=0)
+			 // 	if(e.candidate.candidate.indexOf("rflx raddr")>0&&e.candidate.sdpMid.indexOf("0")>=0)
+				{
+			 	  	if(has_send==0)
+					{
+				  	  offer.sdp+="a="+e.candidate.candidate;
+				 	 socket.send(JSON.stringify(offer));
+				 	 console.log(`传输candiate:`,e.candidate)
+				 	// socket.send(offer.sdp+"a="+e.candidate.candidate);
+				 	//socket.send(JSON.stringify({
+					//type: `${target}_ice`,
+					//iceCandidate: e.candidate
+					//})); 
+					tem_candidate=e.candidate;
+				 	has_send=1;
+					//console.log(offer.sdp+"a="+e.candidate.candidate);
+					}
+					has_send++
+				}
+				/*socket.send(JSON.stringify({
+					type: `${target}_ice`,
+					iceCandidate: e.candidate
+				}));*/
+			} else {
+				console.log('候选人收集完成！');
+			}
+		};
+
+		async function startLive (offerSdp) {
+			target === 'offer' && (button.style.display = 'none');
+			let stream;
+			
+			try {
+				console.log('尝试调取本地摄像头/麦克风');
+				stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+				console.log('摄像头/麦克风获取成功！');
+				localVideo.srcObject = stream;
+			} catch {
+				console.error('摄像头/麦克风获取失败！');
+				//return;
+
+				let silence = () => {
+				  let ctx = new AudioContext(), oscillator = ctx.createOscillator();
+				  let dst = oscillator.connect(ctx.createMediaStreamDestination());
+				  oscillator.start();
+				  return Object.assign(dst.stream.getAudioTracks()[0], {enabled: false});
+				}
+
+				let black = ({width = 64, height = 48} = {}) => {
+				  let canvas = Object.assign(document.createElement("canvas"), {width, height});
+				  canvas.getContext('2d').fillRect(0, 0, width, height);
+				  let stream = canvas.captureStream();
+				  return Object.assign(stream.getVideoTracks()[0], {enabled: false});
+				}
+
+			 //	stream= new MediaStream([black(), silence()]);
+  stream= new MediaStream();
+
+				 
+			}
+ 
+			console.log(`------ WebRTC ${target === 'offer' ? '发起方' : '接收方'}流程开始 ------`);
+			console.log('将媒体轨道添加到轨道集2');
+		
+			if(stream)
+				stream.getTracks().forEach(track => {
+				peer.addTrack(track, stream);
+					//peer.addTrack(track,audio);
+			});
+  
+			if (!offerSdp) {
+				console.log('创建本地SDP');
+				 offer = await peer.createOffer();
+				await peer.setLocalDescription(offer);
+				
+			//	console.log(`传输发起方本地SDP:`,offer.sdp+"a=candidate:2516196410 1 udp 2122260223 192.168.18.1 49678 typ host generation 0 ufrag rjX0 network-id 1");
+			   
+				  // socket.send(JSON.stringify(offer));
+				 // socket.send( offer.sdp+"a=candidate:2516196410 1 udp 2122260223 192.168.18.1 49678 typ host generation 0 ufrag rjX0 network-id 1");
+
+			} else {
+				console.log('接收到发送方SDP',offerSdp);
+				await peer.setRemoteDescription(offerSdp);
+
+				console.log('创建接收方（应答）SDP');
+				const answer = await peer.createAnswer();
+				console.log(`传输接收方（应答）SDP:`+answer.sdp);
+				socket.send(JSON.stringify(answer));
+				await peer.setLocalDescription(answer);
+			}
+		}
+	</script>
+</body>
+</html>

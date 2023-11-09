@@ -1,0 +1,3 @@
+_id,USER,PASSWORD,EMAIL,friend,type
+65260583c61cc67d6bffc0cd,test_0,123,robert@eryone.com,202304200001,user
+652791646607c404682ab75f,202304200001,,robert@eryone.com,test_0,printer
