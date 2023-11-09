@@ -1,10 +1,10 @@
-# 3dprinter_IP_camera
+# A 3dprinter IP camera with WebRTC
 
+### Hardware:
+<img src="https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/main/images/144619.jpg" width="600" /> 
 
-<img src="https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/4b6cd71608f7fd8a318b4825841dd4b66ee78b3f/images/144619.jpg" width="600" /> 
-
-
-<img src="https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/4b6cd71608f7fd8a318b4825841dd4b66ee78b3f/images/109114434.jpg" width="600" /> 
+### WebRTC html:
+<img src="https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/main/images/109114434.jpg" width="600" /> 
 
 ### Turn数据中转服务器运行turnserver：
 1）按照网络教程安装turnserver
@@ -18,7 +18,7 @@
 ### 安装数据库mongodb
 安装例子：https://zhuanlan.zhihu.com/p/76349679
 数据库的数据结构如图，
-<img src="https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/4b6cd71608f7fd8a318b4825841dd4b66ee78b3f/images/db1.png" width="800" /> 
+<img src="https://github.com/Eryoneoffical/3dprinter_IP_camera/blob/main/images/db1.png" width="600" /> 
 
 用户类别：分别为用户和打印机设备两种类型。
 绑定：通过friend来绑定用户和打印机。
